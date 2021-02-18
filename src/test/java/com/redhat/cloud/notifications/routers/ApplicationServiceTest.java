@@ -108,9 +108,10 @@ public class ApplicationServiceTest {
 
     @Test
     void testPoliciesEventTypeDelete() {
+        // Create a bundle
         Bundle bundle = new Bundle();
-        bundle.setName(BUNDLE_NAME);
-        bundle.setDisplay_name("Insights");
+        bundle.setName("bundle-delete");
+        bundle.setDisplay_name("blah");
         Bundle returnedBundle =
             given()
                 .body(bundle)
@@ -122,10 +123,8 @@ public class ApplicationServiceTest {
 
         Application app = new Application();
         app.setName(APP_NAME);
-        app.setDisplay_name("The best app");
+        app.setDisplay_name("blah");
         app.setBundleId(returnedBundle.getId());
-
-        // All of these are without identityHeader
 
         // Now create an application
         Response response = given()
@@ -139,24 +138,11 @@ public class ApplicationServiceTest {
 
         Application appResponse = Json.decodeValue(response.getBody().asString(), Application.class);
 
-        // Fetch the applications to check they were really added
-        Response resp =
-            given()
-                    // Set header to x-rh-identity
-                    .when()
-                    .get("/internal/applications?bundleName=" + BUNDLE_NAME)
-                    .then()
-                    .statusCode(200)
-                    .extract().response();
-        List apps = Json.decodeValue(resp.getBody().asString(), List.class);
-        Map<String, Object> map = (Map<String, Object>) apps.get(0);
-        Map<String, Object> appMap = (Map<String, Object>) map.get("entity");
-
         // Create eventType
         EventType eventType = new EventType();
         eventType.setName(EVENT_TYPE_NAME);
-        eventType.setDisplay_name("Policies will take care of the rules");
-        eventType.setDescription("This is the description of the rule");
+        eventType.setDisplay_name("Blah");
+        eventType.setDescription("Blah");
 
         response = given()
                 .when()
@@ -176,6 +162,7 @@ public class ApplicationServiceTest {
         .statusCode(200)
         .extract().response();
 
+        // Make sure there is 1 eventtype before we delete
         List<EventType> list = JacksonCodec.decodeValue(response.getBody().asString(), new TypeReference<List<EventType>>() { });
         assertEquals(list.size(), 1);
 
@@ -194,6 +181,7 @@ public class ApplicationServiceTest {
                 .extract().response();
 
         list = JacksonCodec.decodeValue(response.getBody().asString(), new TypeReference<List<EventType>>() { });
+        // Make sure there is no event type anymore
         assertEquals(list.size(), 0);
     }
 
