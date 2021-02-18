@@ -13,7 +13,6 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.jackson.JacksonCodec;
-
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -177,10 +176,10 @@ public class ApplicationServiceTest {
         .statusCode(200)
         .extract().response();
 
-        List<EventType> list = JacksonCodec.decodeValue(response.getBody().asString(), new TypeReference<List<EventType>>() {});
+        List<EventType> list = JacksonCodec.decodeValue(response.getBody().asString(), new TypeReference<List<EventType>>() { });
         assertEquals(list.size(), 1);
 
-        given() 
+        given()
             .when()
             .delete(String.format("/internal/applications/%s/eventTypes/%s", appResponse.getId(), typeResponse.getId()))
             .then()
@@ -194,7 +193,7 @@ public class ApplicationServiceTest {
                 .statusCode(200)
                 .extract().response();
 
-        list = JacksonCodec.decodeValue(response.getBody().asString(), new TypeReference<List<EventType>>() {});
+        list = JacksonCodec.decodeValue(response.getBody().asString(), new TypeReference<List<EventType>>() { });
         assertEquals(list.size(), 0);
     }
 
